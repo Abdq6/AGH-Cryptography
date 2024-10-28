@@ -1,9 +1,21 @@
 import socket
 import struct
 import time
+from PIL import Image
 
 HOST = '0.0.0.0'
 PORT = 5000
+
+
+def image_processing(image):
+    # read image (in the future, read from network socket)
+    image = Image.open(image)
+    # (black and white)
+    bw_image = image.convert("L")
+    # bw_image.show()  # image display
+    bw_image = bw_image.convert("RGB")
+    # save output (in the future, write to network socket)
+    bw_image.save("tmp/BW.jpg")
 
 
 def receive_file(conn, filename):
@@ -40,6 +52,7 @@ def send_file(conn, filename):
         # Wysyłanie rozmiaru pliku 0, aby zasygnalizować brak pliku
         conn.sendall(struct.pack('!I', 0))
 
+
 if __name__ == '__main__':
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
@@ -50,8 +63,8 @@ if __name__ == '__main__':
             print(f"Połączono z {addr}")
 
             # Odbieranie pliku od klienta
-            if receive_file(conn, 'received_image.jpg'):
+            if receive_file(conn, 'tmp/received_image.jpg'):
                 # obrobka pliku
-                time.sleep(1)
+                image_processing('tmp/received_image.jpg')
                 # Wysyłanie pliku z powrotem do klienta
-                send_file(conn, 'received_image.jpg')
+                send_file(conn, 'tmp/BW.jpg')
