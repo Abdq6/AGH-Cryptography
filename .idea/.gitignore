@@ -1,0 +1,4 @@
+# Default ignored files
+/Tests/Output/
+/Tests/tmp/
+/venv/

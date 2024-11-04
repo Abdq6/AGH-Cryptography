@@ -1,6 +1,6 @@
 import socket
 import struct
-
+from numpy import asarray
 HOST = '127.0.0.1'  # serwer obrabiajacy
 PORT = 5000
 
@@ -9,7 +9,8 @@ def send_file(s, filename):
     try:
         with open(filename, 'rb') as f:
             file_data = f.read()
-        s.sendall(struct.pack('!I', len(file_data)))
+        numpydata = asarray(file_data)
+        s.sendall(struct.pack('!I', len(numpydata)))
         # Wysyłanie danych pliku tu będzie funkcja zwracająca zawszyfrowane file_data
         s.sendall(file_data)
         print(f"Plik '{filename}' został wysłany")
