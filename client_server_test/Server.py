@@ -1,6 +1,6 @@
 import socket
 import sys
-from encryption import EncryptionHandler
+from Encryption import EncryptionHandler
 from Pyfhel import PyCtxt
 
 class Server:

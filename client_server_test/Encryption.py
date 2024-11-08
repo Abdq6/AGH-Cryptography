@@ -6,7 +6,7 @@ class EncryptionHandler:
         self.HE = Pyfhel()
         self.scheme = scheme.upper()
         if self.scheme == 'BGV':
-            self.HE.contextGen(scheme='BGV', n=2**13, t=65537, sec=128)
+            self.HE.contextGen(scheme='BGV', n=2**12, t=114689, sec=128)
         elif self.scheme == 'BFV':
             self.HE.contextGen(scheme='BFV', n=2**13, t=65537, sec=128)
         elif self.scheme == 'CKKS':
@@ -17,13 +17,13 @@ class EncryptionHandler:
 
     def encrypt(self, value):
         if self.scheme in ['BGV', 'BFV']:
-            plaintext = np.array([value], dtype=np.int64)
+            plaintext = np.array([int(value)], dtype=np.int64)
             if self.scheme == 'BGV':
                 ciphertext = self.HE.encryptBGV(plaintext)
             else:
                 ciphertext = self.HE.encryptInt(plaintext)
         elif self.scheme == 'CKKS':
-            plaintext = np.array([value], dtype=np.float64)
+            plaintext = np.array([float(value)], dtype=np.float64)
             ciphertext = self.HE.encryptFrac(plaintext)
         return ciphertext.to_bytes()
 
@@ -34,10 +34,12 @@ class EncryptionHandler:
                 decrypted = self.HE.decryptBGV(ciphertext)
             else:
                 decrypted = self.HE.decryptInt(ciphertext)
-            return decrypted[0]
+            return int(decrypted[0])  # Zwracaj liczbę całkowitą
         elif self.scheme == 'CKKS':
             decrypted = self.HE.decryptFrac(ciphertext)
             return decrypted[0]
+
+
 
     def serialize_public_key(self):
         return self.HE.to_bytes_public_key()
